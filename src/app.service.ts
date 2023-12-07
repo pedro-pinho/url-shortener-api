@@ -20,14 +20,14 @@ export class AppService {
       'SELECT long_url FROM urls WHERE short_url = $1',
       [url],
     );
-    return result;
+    return result?.rows[0]?.long_url;
   }
   async checkUrl(url: string): Promise<boolean> {
     const result = await this.client.query(
       'SELECT 1 FROM urls WHERE short_url = $1',
       [url],
     );
-    return result;
+    return result?.rows?.length > 0;
   }
   async generateShortUrl(long_url: string): Promise<string> {
     const short_url = uuidv4();
@@ -36,10 +36,11 @@ export class AppService {
     }
     return short_url;
   }
-  insertUrl(long_url: string, short_url: string): Promise<string> {
-    return this.client.query(
+  insertUrl(long_url: string, short_url: string): Promise<any> {
+    const result = this.client.query(
       'INSERT INTO urls (long_url, short_url) VALUES ($1, $2)',
       [long_url, short_url],
     );
+    return result;
   }
 }

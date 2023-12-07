@@ -13,7 +13,11 @@ export class AppController {
 
   @Post('/')
   async generateShortUrl(@Body() body): Promise<string> {
-    const long_url = await this.appService.generateShortUrl(body.url);
-    return await this.appService.insertUrl(long_url, body.url);
+    const short_url = await this.appService.generateShortUrl(body.url);
+    const result = await this.appService.insertUrl(body.url, short_url);
+    if (result) {
+      return short_url;
+    }
+    throw new Error('Error generating short url');
   }
 }
